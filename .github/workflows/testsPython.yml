@@ -69,35 +69,18 @@ jobs:
   notifications:
     needs: python-unit-tests
     runs-on: ubuntu-latest
+    if: failure()
     steps:
-      - name: Send mail on success
-        if: needs.python-unit-tests.result == 'success'
+      - name: Send failure email
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.SENDER_EMAIL }}
           password: ${{ secrets.SENDER_PASSWORD }}
-          subject: "GitHub Actions Job ${{ github.job }} in ${{ github.repository }}"
+          subject: GitHub Actions Job ${{ github.job }} in ${{ github.repository }} failed
           body: |
-           Job ${{ github.job }} in workflow ${{ github.workflow }} 
-            of repository ${{ github.repository }} succeeded.
-          to: manny_ailabclass@yopmail.com
-          from: Sender Name <${{ secrets.EMAIL_USERNAME }}>
-      
-      - name: Send mail on failure
-        if: needs.python-unit-tests.result == 'success'
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.SENDER_EMAIL }}
-          password: ${{ secrets.SENDER_PASSWORD }}
-          subject: "GitHub Actions Job ${{ github.job }} in ${{ github.repository }}"
-          body: |
-           Job ${{ github.job }} in workflow ${{ github.workflow }} 
+            Job ${{ github.job }} in workflow ${{ github.workflow }}
             of repository ${{ github.repository }} failed.
           to: manny_ailabclass@yopmail.com
-          from: Sender Name <${{ secrets.EMAIL_USERNAME }}>    
-
-
+          from: Sender Name <${{ secrets.EMAIL_USERNAME }}>
