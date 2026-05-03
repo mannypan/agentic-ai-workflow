@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest # the runner (remote machine) will use Ubuntu OS
     steps:
       - name: Send email on start
-        uses: ./.github/actions/notifications/email
+        uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
