@@ -43,20 +43,6 @@ jobs:
   python-unit-tests:
     runs-on: ubuntu-latest # the runner (remote machine) will use Ubuntu OS
     steps:
-      - name: Send email on start
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.SENDER_EMAIL }}
-          password: ${{ secrets.SENDER_PASSWORD }}
-          subject: "GitHub Actions Job ${{ github.job }} in ${{ github.repository }}"
-          body: |
-            Job ${{ github.job }} in workflow ${{ github.workflow }} 
-            of repository ${{ github.repository }} has started.
-          to: manny_ailabclass@yopmail.com
-          from: Sender Name <${{ secrets.EMAIL_USERNAME }}>
-
       - name: Checkout code
         id: checkout
         uses: actions/checkout@v6
@@ -84,10 +70,34 @@ jobs:
     needs: python-unit-tests
     runs-on: ubuntu-latest
     steps:
-      - name: Notify on test results
-        run: |
-          if [ "${{ needs.python-unit-tests.result }}" == "success" ]; then
-            echo "success notifications go here"
-          else
-            echo "failure notifications go here"
-          fi
+      - name: Send mail on success
+        if: needs.python-unit-tests.result == 'success'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.SENDER_EMAIL }}
+          password: ${{ secrets.SENDER_PASSWORD }}
+          subject: "GitHub Actions Job ${{ github.job }} in ${{ github.repository }}"
+          body: |
+           Job ${{ github.job }} in workflow ${{ github.workflow }} 
+            of repository ${{ github.repository }} succeeded.
+          to: manny_ailabclass@yopmail.com
+          from: Sender Name <${{ secrets.EMAIL_USERNAME }}>
+      
+      - name: Send mail on failure
+        if: needs.python-unit-tests.result == 'success'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.SENDER_EMAIL }}
+          password: ${{ secrets.SENDER_PASSWORD }}
+          subject: "GitHub Actions Job ${{ github.job }} in ${{ github.repository }}"
+          body: |
+           Job ${{ github.job }} in workflow ${{ github.workflow }} 
+            of repository ${{ github.repository }} failed.
+          to: manny_ailabclass@yopmail.com
+          from: Sender Name <${{ secrets.EMAIL_USERNAME }}>    
+
+
